@@ -21,17 +21,16 @@ import org.apache.http.message.BasicNameValuePair;
  public class HttpUtils
  {
    
-	@SuppressWarnings("deprecation")
 	public String callGETUrl(String url, Map<String, String> headerMap) {
 		String response = "";
+		StringBuffer result = new StringBuffer();
+		CloseableHttpClient httpClient = null;
 		try {
-			CloseableHttpClient httpClient = null;
 			httpClient = HttpClients.createDefault();
 			if (url.startsWith("https")) {
 				httpClient = (CloseableHttpClient) HttpsClientWrapper.getHttpClient();
 			}
 			HttpGet getRequest = new HttpGet(url);
-			getRequest.addHeader("accept", "application/json");
 			for (String key : headerMap.keySet()) {
 				getRequest.addHeader(key, (String) headerMap.get(key));
 			}
@@ -43,15 +42,30 @@ import org.apache.http.message.BasicNameValuePair;
 			BufferedReader br = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
 			String output;
 			while ((output = br.readLine()) != null) {
-				response = output;
+				result.append(output);
 			}
-			httpClient.getConnectionManager().shutdown();
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+			response = result.toString();
+			return response;
+		} catch (ClientProtocolException clientProtocolException) {
+			clientProtocolException.printStackTrace();
+			return "A Client Protocol Exception has occured.\n" + clientProtocolException.toString();
+		} catch (IOException ioException) {
+			ioException.printStackTrace();
+			return "An IOException Protocol Exception has occured.\n" + ioException.toString();
+		} catch (Exception someException) {
+			someException.printStackTrace();
+			return "An Exception has occured.\n" + someException.toString();
+		} finally {
+			if (httpClient != null && httpClient.getConnectionManager() != null) {
+				try {
+					httpClient.close();
+				} catch (IOException ioException) {
+					ioException.printStackTrace();
+					return "An IOException has occured while trying to close the connection.\n"
+							+ ioException.toString();
+				}
+			}
 		}
-		return response;
 	}
    
 	@SuppressWarnings("deprecation")
