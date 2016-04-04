@@ -68,7 +68,6 @@ import org.apache.http.message.BasicNameValuePair;
 		}
 	}
    
-	@SuppressWarnings("deprecation")
 	public String postData(String url, String data,
 			Map<String, String> headerMap) {
 		String outPut = "";
@@ -83,16 +82,11 @@ import org.apache.http.message.BasicNameValuePair;
 			for (String key : headerMap.keySet()) {
 				postRequest.addHeader(key, headerMap.get(key));
 			}
-
-			String USER_AGENT = "";
-			postRequest.setHeader("User-Agent", USER_AGENT);
+			
 			postRequest.setHeader("Content-Type", "application/json");
-			postRequest
-					.setHeader("Api-Key", "oYPHyGEfjeUXjjyTDzIRuIxFpcPgxQeU");
 
 			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-			urlParameters.add(new BasicNameValuePair("userInfo", URLEncoder
-					.encode(data)));
+			urlParameters.add(new BasicNameValuePair("userInfo", URLEncoder.encode(data)));
 			postRequest.setEntity(new StringEntity(data));
 			HttpResponse response = httpClient.execute(postRequest);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
