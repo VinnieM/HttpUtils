@@ -71,9 +71,10 @@ import org.apache.http.message.BasicNameValuePair;
 	public String postData(String url, String data,
 			Map<String, String> headerMap) {
 		String result = "";
+		CloseableHttpClient httpClient = null;
 		try {
 			HttpPost postRequest = new HttpPost(url);
-			CloseableHttpClient httpClient = null;
+			
 			httpClient = HttpClients.createDefault();
 			if (url.startsWith("https")) {
 				httpClient = (CloseableHttpClient) HttpsClientWrapper.getHttpClient();
@@ -95,8 +96,25 @@ import org.apache.http.message.BasicNameValuePair;
 				combinedResult.append(line);
 			}
 			result = combinedResult.toString();
-		} catch (Exception e) {
-			System.out.println(e);
+		} catch (ClientProtocolException clientProtocolException) {
+			clientProtocolException.printStackTrace();
+			return "A Client Protocol Exception has occured.\n" + clientProtocolException.toString();
+		} catch (IOException ioException) {
+			ioException.printStackTrace();
+			return "An IOException Protocol Exception has occured.\n" + ioException.toString();
+		} catch (Exception someException) {
+			someException.printStackTrace();
+			return "An Exception has occured.\n" + someException.toString();
+		} finally {
+			if (httpClient != null && httpClient.getConnectionManager() != null) {
+				try {
+					httpClient.close();
+				} catch (IOException ioException) {
+					ioException.printStackTrace();
+					return "An IOException has occured while trying to close the connection.\n"
+							+ ioException.toString();
+				}
+			}
 		}
 		return result;
 	}
