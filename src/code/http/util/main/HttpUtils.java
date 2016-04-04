@@ -70,19 +70,17 @@ import org.apache.http.message.BasicNameValuePair;
    
 	public String postData(String url, String data,
 			Map<String, String> headerMap) {
-		String outPut = "";
+		String result = "";
 		try {
 			HttpPost postRequest = new HttpPost(url);
 			CloseableHttpClient httpClient = null;
 			httpClient = HttpClients.createDefault();
 			if (url.startsWith("https")) {
-				httpClient = (CloseableHttpClient) HttpsClientWrapper
-						.getHttpClient();
+				httpClient = (CloseableHttpClient) HttpsClientWrapper.getHttpClient();
 			}
 			for (String key : headerMap.keySet()) {
 				postRequest.addHeader(key, headerMap.get(key));
 			}
-			
 			postRequest.setHeader("Content-Type", "application/json");
 
 			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
@@ -91,15 +89,15 @@ import org.apache.http.message.BasicNameValuePair;
 			HttpResponse response = httpClient.execute(postRequest);
 			BufferedReader rd = new BufferedReader(new InputStreamReader(
 					response.getEntity().getContent()));
-			StringBuffer result = new StringBuffer();
+			StringBuffer combinedResult = new StringBuffer();
 			String line = "";
 			while ((line = rd.readLine()) != null) {
-				result.append(line);
+				combinedResult.append(line);
 			}
-			outPut = result.toString();
+			result = combinedResult.toString();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		return outPut;
+		return result;
 	}
  }
