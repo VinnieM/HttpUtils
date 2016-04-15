@@ -6,8 +6,8 @@
 
   The Latest Version
   ------------------
-  Currently this version support Get and POST methods. Proxy support has not been added yet.
-
+  Added Proxy support for Get and POST methods.
+  
   Licensing
   ---------
   The undderlying jar file is under the Apache 2 license. This project can be used by anyone, as long as you do not blow up anything!!!
