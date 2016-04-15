@@ -8,55 +8,87 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
+import code.http.utils.proxy.Config;
+
 public class HttpUtils {
-	// Get Request, where header is used
-	public String callGETUrl(String url, Map<String, String> headerMap) {
-		String response = "";
+	
+	public String executeGetRequest(String url, Map<String, String> headerMap) {
+		// Checking for valid URL and Headers.
+		if (url.length() <= 1) 
+			return "URL is empty, Please enter a valid URL";
+		else if (headerMap.size() == 0) 
+			return "Header is Empty. Please enter valid Headers";
 		StringBuffer result = new StringBuffer();
 		CloseableHttpClient httpClient = null;
 		try {
-			httpClient = HttpClients.createDefault();
-			if (url.startsWith("https")) {
-				httpClient = (CloseableHttpClient) HttpsClientWrapper.getHttpClient();
-			}
 			HttpGet getRequest = new HttpGet(url);
+			if (Config.getProxyRequired()) {
+				CredentialsProvider proxyCredentials = new BasicCredentialsProvider();
+				proxyCredentials
+						.setCredentials(
+								new AuthScope(Config.getProxyIp(), Integer
+										.parseInt(Config.getPort())),
+								new UsernamePasswordCredentials(Config
+										.getUsername(), Config
+										.getPassword()));
+				httpClient = HttpClients.custom()
+						.setDefaultCredentialsProvider(proxyCredentials)
+						.build();
+				HttpHost proxy = new HttpHost(Config.getProxyIp(),
+						Integer.parseInt(Config.getPort()));
+				RequestConfig config = RequestConfig.custom().setProxy(proxy)
+						.build();
+				getRequest.setConfig(config);
+			} else {
+				httpClient = HttpClients.createDefault();
+			}
+			// Adding the Headers
 			for (String key : headerMap.keySet()) {
 				getRequest.addHeader(key, (String) headerMap.get(key));
 			}
 			HttpResponse httpResponse = httpClient.execute(getRequest);
+			// If the Call is not a Success an Error is Returned
 			if (httpResponse.getStatusLine().getStatusCode() != 200) {
-				throw new RuntimeException(
-						"Failed : HTTP error code : " + httpResponse.getStatusLine().getStatusCode());
+				throw new RuntimeException("Failed : HTTP error code : "
+						+ httpResponse.getStatusLine().getStatusCode());
 			}
-			BufferedReader br = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
-			String output;
-			while ((output = br.readLine()) != null) {
+			BufferedReader bufferedReader = new BufferedReader(
+					new InputStreamReader(httpResponse.getEntity().getContent()));
+			String output = "";
+			while ((output = bufferedReader.readLine()) != null) {
 				result.append(output);
 			}
-			response = result.toString();
-			return response;
+			output = null;
+			return result.toString();
 		} catch (ClientProtocolException clientProtocolException) {
 			clientProtocolException.printStackTrace();
-			return "A Client Protocol Exception has occured.\n" + clientProtocolException.toString();
+			return "A Client Protocol Exception has occured.\n"
+					+ clientProtocolException.toString();
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
-			return "An IOException Protocol Exception has occured.\n" + ioException.toString();
+			return "An IOException Protocol Exception has occured.\n"
+					+ ioException.toString();
 		} catch (Exception someException) {
-			// Houston we have a problem
 			someException.printStackTrace();
 			return "An Exception has occured.\n" + someException.toString();
 		} finally {
-			if (httpClient != null && httpClient.getConnectionManager() != null) {
+			if (httpClient != null) {
 				try {
 					httpClient.close();
 				} catch (IOException ioException) {
@@ -67,42 +99,42 @@ public class HttpUtils {
 			}
 		}
 	}
-
+	
 	// Get Request where header is not used.
-	public String callGETUrl(String url) {
-		String response = "";
+	public String executeGetRequest(String url) {
+		if(url.length()<=1)
+			return "Input URL is Empty, Please enter a valid URL.\n";
 		StringBuffer result = new StringBuffer();
 		CloseableHttpClient httpClient = null;
 		try {
 			httpClient = HttpClients.createDefault();
-			if (url.startsWith("https")) {
-				httpClient = (CloseableHttpClient) HttpsClientWrapper.getHttpClient();
-			}
 			HttpGet getRequest = new HttpGet(url);
 			HttpResponse httpResponse = httpClient.execute(getRequest);
 			if (httpResponse.getStatusLine().getStatusCode() != 200) {
-				throw new RuntimeException(
-						"Failed : HTTP error code : " + httpResponse.getStatusLine().getStatusCode());
+				throw new RuntimeException("Failed : HTTP error code : "
+						+ httpResponse.getStatusLine().getStatusCode());
 			}
-			BufferedReader br = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+					httpResponse.getEntity().getContent()));
 			String output;
-			while ((output = br.readLine()) != null) {
+			while ((output = bufferedReader.readLine()) != null) {
 				result.append(output);
 			}
-			response = result.toString();
-			return response;
+			return result.toString();
 		} catch (ClientProtocolException clientProtocolException) {
 			clientProtocolException.printStackTrace();
-			return "A Client Protocol Exception has occured.\n" + clientProtocolException.toString();
+			return "A Client Protocol Exception has occured.\n"
+					+ clientProtocolException.toString();
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
-			return "An IOException Protocol Exception has occured.\n" + ioException.toString();
+			return "An IOException Protocol Exception has occured.\n"
+					+ ioException.toString();
 		} catch (Exception someException) {
 			// Houston we have a problem
 			someException.printStackTrace();
 			return "An Exception has occured.\n" + someException.toString();
 		} finally {
-			if (httpClient != null && httpClient.getConnectionManager() != null) {
+			if (httpClient != null) {
 				try {
 					httpClient.close();
 				} catch (IOException ioException) {
@@ -114,43 +146,65 @@ public class HttpUtils {
 		}
 	}
 
-	public String postData(String url, String data, Map<String, String> headerMap) {
-		String result = "";
+	public String executePostRequest(String postUrl, String postData,
+			Map<String, String> headers) {
+		// Checking for valid URL and Headers.
+		if (postUrl.length() <= 1) 
+			return "URL is empty, Please enter a valid URL";
+		else if (headers.size() == 0) 
+			return "Header is Empty. Please enter valid Headers";
 		CloseableHttpClient httpClient = null;
 		try {
-			HttpPost postRequest = new HttpPost(url);
-
-			httpClient = HttpClients.createDefault();
-			if (url.startsWith("https")) {
-				httpClient = (CloseableHttpClient) HttpsClientWrapper.getHttpClient();
+			HttpPost postRequest = new HttpPost(postUrl);
+			if (Config.getProxyRequired()) {
+				CredentialsProvider credsProvider = new BasicCredentialsProvider();
+				credsProvider
+						.setCredentials(
+								new AuthScope(Config.getProxyIp(), Integer
+										.parseInt(Config.getPort())),
+								new UsernamePasswordCredentials(Config
+										.getUsername(), Config
+										.getPassword()));
+				httpClient = HttpClients.custom()
+						.setDefaultCredentialsProvider(credsProvider).build();
+				HttpHost proxy = new HttpHost(Config.getProxyIp(),
+						Integer.parseInt(Config.getPort()));
+				RequestConfig config = RequestConfig.custom().setProxy(proxy)
+						.build();
+				postRequest.setConfig(config);
+			} else {
+				httpClient = HttpClients.createDefault();
 			}
-			for (String key : headerMap.keySet()) {
-				postRequest.addHeader(key, headerMap.get(key));
+			// Adding the headers
+			for (String key : headers.keySet()) {
+				postRequest.addHeader(key, headers.get(key));
 			}
-			postRequest.setHeader("Content-Type", "application/json");
-
 			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-			urlParameters.add(new BasicNameValuePair("userInfo", URLEncoder.encode(data)));
-			postRequest.setEntity(new StringEntity(data));
+			urlParameters.add(new BasicNameValuePair("userInfo", URLEncoder
+					.encode(postData, "UTF-8")));
+			postRequest.setEntity(new StringEntity(postData));
 			HttpResponse response = httpClient.execute(postRequest);
-			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-			StringBuffer combinedResult = new StringBuffer();
+			BufferedReader rd = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent()));
+			StringBuffer result = new StringBuffer();
 			String line = "";
 			while ((line = rd.readLine()) != null) {
-				combinedResult.append(line);
+				result.append(line);
 			}
-			result = combinedResult.toString();
+			return result.toString();
 		} catch (ClientProtocolException clientProtocolException) {
 			clientProtocolException.printStackTrace();
-			return "A Client Protocol Exception has occured.\n" + clientProtocolException.toString();
+			return "A Client Protocol Exception has occured.\n"
+					+ clientProtocolException.toString();
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
-			return "An IOException Protocol Exception has occured.\n" + ioException.toString();
+			return "An IOException Protocol Exception has occured.\n"
+					+ ioException.toString();
 		} catch (Exception someException) {
 			someException.printStackTrace();
 			return "An Exception has occured.\n" + someException.toString();
 		} finally {
-			if (httpClient != null && httpClient.getConnectionManager() != null) {
+			if (httpClient != null) {
 				try {
 					httpClient.close();
 				} catch (IOException ioException) {
@@ -160,6 +214,5 @@ public class HttpUtils {
 				}
 			}
 		}
-		return result;
 	}
 }
