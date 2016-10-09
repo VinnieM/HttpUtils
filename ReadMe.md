@@ -10,4 +10,4 @@
   
   Licensing
   ---------
-  The undderlying jar file is under the Apache 2 license. This project can be used by anyone, as long as you do not blow up anything!!!
+  The undderlying jar file is under the Apache 2 license. This project can be used by anyone, as long as it is used for good.
