@@ -13,7 +13,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -29,7 +28,6 @@ import code.http.utils.proxy.Config;
 public class HttpUtils {
 	
 	public String executeGetRequest(String url, Map<String, String> headerMap) {
-		// Checking for valid URL and Headers.
 		if (url.length() <= 1) 
 			return "URL is empty, Please enter a valid URL";
 		else if (headerMap.size() == 0) 
@@ -76,17 +74,9 @@ public class HttpUtils {
 			}
 			output = null;
 			return result.toString();
-		} catch (ClientProtocolException clientProtocolException) {
-			clientProtocolException.printStackTrace();
-			return "A Client Protocol Exception has occured.\n"
-					+ clientProtocolException.toString();
 		} catch (IOException ioException) {
-			ioException.printStackTrace();
-			return "An IOException Protocol Exception has occured.\n"
+			return "An IO Exception has occured.\n"
 					+ ioException.toString();
-		} catch (Exception someException) {
-			someException.printStackTrace();
-			return "An Exception has occured.\n" + someException.toString();
 		} finally {
 			if (httpClient != null) {
 				try {
@@ -121,18 +111,9 @@ public class HttpUtils {
 				result.append(output);
 			}
 			return result.toString();
-		} catch (ClientProtocolException clientProtocolException) {
-			clientProtocolException.printStackTrace();
-			return "A Client Protocol Exception has occured.\n"
-					+ clientProtocolException.toString();
 		} catch (IOException ioException) {
-			ioException.printStackTrace();
-			return "An IOException Protocol Exception has occured.\n"
+			return "A IO Exception has occured.\n"
 					+ ioException.toString();
-		} catch (Exception someException) {
-			// Houston we have a problem
-			someException.printStackTrace();
-			return "An Exception has occured.\n" + someException.toString();
 		} finally {
 			if (httpClient != null) {
 				try {
@@ -192,17 +173,9 @@ public class HttpUtils {
 				result.append(line);
 			}
 			return result.toString();
-		} catch (ClientProtocolException clientProtocolException) {
-			clientProtocolException.printStackTrace();
-			return "A Client Protocol Exception has occured.\n"
-					+ clientProtocolException.toString();
 		} catch (IOException ioException) {
-			ioException.printStackTrace();
-			return "An IOException Protocol Exception has occured.\n"
+			return "A IO Exception has occured.\n"
 					+ ioException.toString();
-		} catch (Exception someException) {
-			someException.printStackTrace();
-			return "An Exception has occured.\n" + someException.toString();
 		} finally {
 			if (httpClient != null) {
 				try {
