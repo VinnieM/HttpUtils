@@ -2,7 +2,7 @@
 
   What is it?
   -----------
-  The Http Utils class is used in any project which uses any HTTP protocol. The underling jar is an Apache HTTP Commons jar. Orginally designed as a wrapper class. Once the prject is imported making HTTP calls would be easier.
+  This is an Http Utils class which can be used to make any HTTP protocol. The underling jar is an Apache HTTP. This is designed as a wrapper class.
 
   The Latest Version
   ------------------
