@@ -1,4 +1,4 @@
-package code.http.utils.proxy;
+package code.http.util.proxy;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

@@ -1,4 +1,4 @@
-package code.http.utils.proxy;
+package code.http.util.proxy;
 
 import java.util.Properties;
 

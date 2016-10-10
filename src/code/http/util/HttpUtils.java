@@ -1,4 +1,4 @@
-package code.http.util.main;
+package code.http.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
-import code.http.utils.proxy.Config;
+import code.http.util.proxy.Config;
 
 public class HttpUtils {
 	
