@@ -32,9 +32,10 @@ public class HttpUtils {
 			return "URL is empty, Please enter a valid URL";
 		else if (headerMap.size() == 0) 
 			return "Header is Empty. Please enter valid Headers";
-		StringBuffer result = new StringBuffer();
-		CloseableHttpClient httpClient = null;
 		try {
+			StringBuffer result = new StringBuffer();
+			CloseableHttpClient httpClient = null;
+			
 			HttpGet getRequest = new HttpGet(url);
 			if (Config.getProxyRequired()) {
 				CredentialsProvider proxyCredentials = new BasicCredentialsProvider();
@@ -85,9 +86,11 @@ public class HttpUtils {
 	public String executeGetRequest(String url) {
 		if(url.length()<=1)
 			return "Input URL is Empty, Please enter a valid URL.\n";
-		StringBuffer result = new StringBuffer();
-		CloseableHttpClient httpClient = null;
+		
 		try {
+			StringBuffer result = new StringBuffer();
+			CloseableHttpClient httpClient = null;
+			
 			httpClient = HttpClients.createDefault();
 			HttpGet getRequest = new HttpGet(url);
 			HttpResponse httpResponse = httpClient.execute(getRequest);
@@ -116,8 +119,10 @@ public class HttpUtils {
 			return "URL is empty, Please enter a valid URL";
 		else if (headers.size() == 0) 
 			return "Header is Empty. Please enter valid Headers";
-		CloseableHttpClient httpClient = null;
+		
 		try {
+			CloseableHttpClient httpClient = null;
+			
 			HttpPost postRequest = new HttpPost(postUrl);
 			if (Config.getProxyRequired()) {
 				CredentialsProvider credsProvider = new BasicCredentialsProvider();
