@@ -73,6 +73,8 @@ public class HttpUtils {
 				result.append(output);
 			}
 			output = null;
+			httpClient.close();
+			return result.toString();
 		} catch (IOException ioException) {
 			return "An IO Exception has occured.\n"
 					+ ioException.toString();
@@ -99,6 +101,7 @@ public class HttpUtils {
 			while ((output = bufferedReader.readLine()) != null) {
 				result.append(output);
 			}
+			httpClient.close();
 			return result.toString();
 		} catch (IOException ioException) {
 			return "A IO Exception has occured.\n"
@@ -151,6 +154,7 @@ public class HttpUtils {
 			while ((line = rd.readLine()) != null) {
 				result.append(line);
 			}
+			httpClient.close();
 			return result.toString();
 		} catch (IOException ioException) {
 			return "A IO Exception has occured.\n"
