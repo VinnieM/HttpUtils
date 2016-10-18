@@ -73,21 +73,10 @@ public class HttpUtils {
 				result.append(output);
 			}
 			output = null;
-			return result.toString();
 		} catch (IOException ioException) {
 			return "An IO Exception has occured.\n"
 					+ ioException.toString();
-		} finally {
-			if (httpClient != null) {
-				try {
-					httpClient.close();
-				} catch (IOException ioException) {
-					ioException.printStackTrace();
-					return "An IOException has occured while trying to close the connection.\n"
-							+ ioException.toString();
-				}
-			}
-		}
+		} 
 	}
 	
 	// Get Request where header is not used.
@@ -114,16 +103,6 @@ public class HttpUtils {
 		} catch (IOException ioException) {
 			return "A IO Exception has occured.\n"
 					+ ioException.toString();
-		} finally {
-			if (httpClient != null) {
-				try {
-					httpClient.close();
-				} catch (IOException ioException) {
-					ioException.printStackTrace();
-					return "An IOException has occured while trying to close the connection.\n"
-							+ ioException.toString();
-				}
-			}
 		}
 	}
 
@@ -176,16 +155,6 @@ public class HttpUtils {
 		} catch (IOException ioException) {
 			return "A IO Exception has occured.\n"
 					+ ioException.toString();
-		} finally {
-			if (httpClient != null) {
-				try {
-					httpClient.close();
-				} catch (IOException ioException) {
-					ioException.printStackTrace();
-					return "An IOException has occured while trying to close the connection.\n"
-							+ ioException.toString();
-				}
-			}
 		}
 	}
 }
